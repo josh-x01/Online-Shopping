@@ -3,7 +3,12 @@ package com.swingForms;
 import com.database.Connector;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SignupPage extends JFrame{
     private JPanel page;
     private JTextField fnameField;
@@ -16,7 +21,7 @@ public class SignupPage extends JFrame{
     private JLabel email;
     private JLabel username;
     private JLabel password;
-    private JTextField phoneField;
+    public JTextField phoneField;
     private JPasswordField passwordField;
     public JButton signupButton;
     private JPasswordField comfirmField;
@@ -54,6 +59,70 @@ public class SignupPage extends JFrame{
         }
         return false;
     }
+    public boolean passwordMatch() {
+        passwordField.setEchoChar('\u0000');
+        comfirmField.setEchoChar('\u0000');
+        if (passwordField.getText().equals(comfirmField.getText())) {
+            passwordField.setEchoChar('*');
+            comfirmField.setEchoChar('*');
+            return true;
+        }
+        else {
+            passwordField.setEchoChar('*');
+            comfirmField.setEchoChar('*');
+            return false;
+        }
+    }
+    public boolean checkRequiredField() {
+        passwordField.setEchoChar('\u0000');
+        if (fnameField.getText().equals("") || lnameField.getText().equals("") ||
+                emailField.getText().equals("") || usernameField.getText().equals("") ||
+                passwordField.getText().equals("")
+        ) {passwordField.setEchoChar('*'); return false;}
+        passwordField.setEchoChar('*');
+        return true;
+    }
+//    public boolean validPhoneNumber() {
+//        if(phoneField.getText().length() != 10) return false;
+//        if(phoneField.getText().contains()) return false;
+//    }
+
+
+    public boolean isValidMobileNo()
+    {
+        String s = phoneField.getText();
+
+        // The given argument to compile() method
+        // is regular expression. With the help of
+        // regular expression we can validate mobile
+        // number.
+        // The number should be of 10 digits.
+
+        // Creating a Pattern class object
+        Pattern p = Pattern.compile("^\\d{10}$");
+
+        // Pattern class contains matcher() method
+        // to find matching between given number
+        // and regular expression for which
+        // object of Matcher class is created
+        Matcher m = p.matcher(s);
+
+        // Returning boolean value
+        return (m.matches());
+    }
+    public boolean isValidEmail()
+    {
+        String email = emailField.getText();
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
     public SignupPage() {
         super("Registration");
         this.setUndecorated(true);
@@ -71,7 +140,15 @@ public class SignupPage extends JFrame{
         this.passwordField.setBorder(null);
         this.comfirmField.setBorder(null);
         this.phoneField.setBorder(null);
+        this.passwordField.setEchoChar('*');
+        this.comfirmField.setEchoChar('*');
 //        this.setVisible(true);
         sqlHandler = new Connector();
+        phoneField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 }

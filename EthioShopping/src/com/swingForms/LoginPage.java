@@ -45,6 +45,65 @@ public class LoginPage extends JFrame {
         }
         return -1;
     }
+    public void loginChecker() {
+        switch (verifyAccount()) {
+            case 0:
+                LoginPage.super.dispose();
+                java.awt.EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        new ShoppingPage().setVisible(true);
+                    }
+                });
+                break;
+            case 1:
+                ((ErrorFrame) errorPage).messageField.setText("Incorrect Password");
+                errorPage.setSize(230, 200);
+                errorPage.setVisible(true);
+                break;
+            case -1:
+                ((ErrorFrame) errorPage).messageField.setText("Username not found! Please create an account");
+                errorPage.setSize(400, 200);
+                errorPage.setVisible(true);
+                break;
+        }
+    }
+    public void signupChecker() {
+        if (!((SignupPage) signupPage).checkRequiredField()) {
+            ((ErrorFrame ) errorPage).messageField.setText("All fields are required except mobile number");
+            errorPage.setSize(400, 160);
+            errorPage.setVisible(true);
+            return;
+        }
+        if (!((SignupPage) signupPage).isValidEmail()) {
+            ((ErrorFrame) errorPage).messageField.setText("Invalid Email address!");
+            errorPage.setSize(230, 160);
+            errorPage.setVisible(true);
+            return;
+        }
+        if (!((SignupPage) signupPage).checkUsername()) {
+            ((ErrorFrame ) errorPage).messageField.setText("Username exists");
+            errorPage.setSize(220, 160);
+            errorPage.setVisible(true);
+            return;
+        }
+        if (!((SignupPage) signupPage).passwordMatch()) {
+            ((ErrorFrame) errorPage).messageField.setText("Password don't match!");
+            errorPage.setSize(230, 160);
+            errorPage.setVisible(true);
+            return;
+        }
+        if (!((SignupPage) signupPage).isValidMobileNo()) {
+            ((ErrorFrame) errorPage).messageField.setText("Invalid mobile number!");
+            errorPage.setSize(230, 160);
+            errorPage.setVisible(true);
+            return;
+        }
+        signupPage.dispose();
+
+        LoginPage.super.setVisible(true);
+        ((SignupPage) signupPage).storeData();
+        changeWelcome();
+    }
     public LoginPage() {
         super("Swing demo");
         this.setUndecorated(true);
@@ -66,6 +125,7 @@ public class LoginPage extends JFrame {
         this.signin.setBorder(null);
         this.signup.setBorder(null);
         this.closeButton.setBorder(null);
+        this.passwordField.setEchoChar('*');
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,46 +151,29 @@ public class LoginPage extends JFrame {
                 signupPage.setVisible(true);
             }
         });
-
         ((SignupPage) signupPage).signupButton.addActionListener(new ActionListener() {
             //                    @Override
             public void actionPerformed(ActionEvent e) {
-                if (((SignupPage) signupPage).checkUsername()) {
-//                    signupPage.setVisible(false);
-                    signupPage.dispose();
-                    LoginPage.super.setVisible(true);
-                    ((SignupPage) signupPage).storeData();
-                    changeWelcome();
-                } else {
-                    ((ErrorFrame ) errorPage).messageField.setText("Username exists");
-                    errorPage.setVisible(true);
-                }
+                signupChecker();;
             }
         });
+        ((SignupPage) signupPage).phoneField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                signupChecker();
+            }
+        });
+
         signin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                switch (verifyAccount()) {
-                    case 0:
-                        LoginPage.super.dispose();
-                        java.awt.EventQueue.invokeLater(new Runnable() {
-                            public void run() {
-                                new ShoppingPage().setVisible(true);
-                            }
-                        });
-                        break;
-                    case 1:
-                        ((ErrorFrame ) errorPage).messageField.setText("Incorrect Password");
-                        errorPage.setSize(230, 200);
-                        errorPage.setVisible(true);
-                        break;
-                    case -1:
-                        ((ErrorFrame ) errorPage).messageField.setText("Username not found! Please create account");
-                        errorPage.setSize(400, 200);
-                        errorPage.setVisible(true);
-                        break;
-                }
-                ;
+                loginChecker();
+            }
+        });
+        passwordField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loginChecker();
             }
         });
     }
